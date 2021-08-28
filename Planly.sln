@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FF9BD747-8FB3-44BE-9640-1B039300B59E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planly.DomainModel", "Planly.DomainModel\Planly.DomainModel.csproj", "{4B45A175-6C03-4A9D-9197-7013C0A60222}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planly.Application", "Planly.Application\Planly.Application.csproj", "{4CF60381-7FFF-4ECC-8219-78643FA9663F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planly.Persistence", "Planly.Persistence\Planly.Persistence.csproj", "{96A09338-AA18-449D-A855-7881B542E831}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planly.Web.Client", "Planly.Web\Client\Planly.Web.Client.csproj", "{A95C5931-0E39-49BB-8F4D-267A090B150F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planly.Web.Server", "Planly.Web\Server\Planly.Web.Server.csproj", "{31C6EE5E-5C89-4CAE-AF0D-A98670437216}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4B45A175-6C03-4A9D-9197-7013C0A60222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B45A175-6C03-4A9D-9197-7013C0A60222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B45A175-6C03-4A9D-9197-7013C0A60222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B45A175-6C03-4A9D-9197-7013C0A60222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CF60381-7FFF-4ECC-8219-78643FA9663F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CF60381-7FFF-4ECC-8219-78643FA9663F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CF60381-7FFF-4ECC-8219-78643FA9663F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CF60381-7FFF-4ECC-8219-78643FA9663F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96A09338-AA18-449D-A855-7881B542E831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96A09338-AA18-449D-A855-7881B542E831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96A09338-AA18-449D-A855-7881B542E831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96A09338-AA18-449D-A855-7881B542E831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A95C5931-0E39-49BB-8F4D-267A090B150F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A95C5931-0E39-49BB-8F4D-267A090B150F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A95C5931-0E39-49BB-8F4D-267A090B150F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A95C5931-0E39-49BB-8F4D-267A090B150F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31C6EE5E-5C89-4CAE-AF0D-A98670437216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C6EE5E-5C89-4CAE-AF0D-A98670437216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C6EE5E-5C89-4CAE-AF0D-A98670437216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C6EE5E-5C89-4CAE-AF0D-A98670437216}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EADDD5E9-D08D-4FCB-9584-E10726ABC83A}
+	EndGlobalSection
+EndGlobal

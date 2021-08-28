@@ -1,0 +1,13 @@
+﻿.lock-button span {
+    font-size: 20px;
+}
+
+.lock-button {
+    position: relative;
+    top: 7px;
+    cursor: pointer;
+}
+
+.card {
+    width: 600px;
+}

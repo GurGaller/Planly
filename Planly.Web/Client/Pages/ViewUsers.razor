@@ -1,0 +1,39 @@
+﻿@page "/users"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrator")]
+@inject HttpClient HttpClient
+
+<h1>Users</h1>
+<ul>
+    @foreach (var user in users)
+    {
+        <li>
+            <UserDisplay User="user" />
+        </li>
+    }
+</ul>
+
+@if (moreUsersAvailable)
+{
+    <button class="btn btn-primary" @onclick="LoadMoreAsync">Load more</button>
+}
+@code {
+    private bool moreUsersAvailable;
+    private List<User> users = new List<User>();
+    private const int LoadingLimit = 20;
+
+    protected override Task OnInitializedAsync()
+    {
+        return LoadMoreAsync();
+    }
+
+    private async Task LoadMoreAsync()
+    {
+        var today = DateTime.Today.ToString("s");
+        var url = $"/api/users?offset={users.Count}&limit={LoadingLimit}";
+        var newUsers = await HttpClient.GetFromJsonAsync<List<User>>(url);
+        moreUsersAvailable = newUsers.Count is LoadingLimit;
+        users.AddRange(newUsers);
+        StateHasChanged();
+    }
+}

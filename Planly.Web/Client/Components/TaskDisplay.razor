@@ -1,0 +1,58 @@
+﻿@inject HttpClient HttpClient
+@using System.Text.Json
+@using Planly.Web.Client.JsonConverters
+
+<div class="card">
+    <a @onclick="ToggleEditor" style="cursor: pointer">
+        <div class="card-header @CardClass">
+            <div class="row">
+                <div class="col-11">
+                    <h5 class="card-title">@Task.Title</h5>
+                    <h6 class="card-subtitle">Deadline: @Task.Deadline?.ToString("f")</h6>
+                </div>
+                <div class="col-1">
+                    <div class="delete-task-button" @onclick="DeleteTaskAsync">
+                        <span class="oi oi-trash"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    @if (displayEditor)
+    {
+<div class="card-body">
+    <TaskEditor Task="Task" Callback="UpdateTaskAsync" />
+</div>}
+</div>
+
+@code { [Parameter]
+            public TaskDto Task { get; set; }
+            [Parameter]
+            public EventCallback OnDelete { get; set; }
+            private string SessionUrl => $"/api/tasks/{Task.Id}";
+            private bool displayEditor;
+            private static readonly JsonSerializerOptions JsonOptions = new()
+            {
+                Converters = { new TimeSpanConverter() }
+            };
+            private string CardClass => Task.TotalTimeRequired <= Task.TimeCompleted ? "done" : string.Empty;
+
+            private void ToggleEditor()
+            {
+                displayEditor = !displayEditor;
+                StateHasChanged();
+            }
+
+            private async Task UpdateTaskAsync()
+            {
+                var response = await HttpClient.PutAsJsonAsync(SessionUrl, Task, JsonOptions);
+                response.EnsureSuccessStatusCode();
+            }
+
+            private async Task DeleteTaskAsync()
+            {
+                var response = await HttpClient.DeleteAsync(SessionUrl);
+                response.EnsureSuccessStatusCode();
+                displayEditor = false;
+                await OnDelete.InvokeAsync();
+            } }

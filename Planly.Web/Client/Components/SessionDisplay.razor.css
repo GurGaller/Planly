@@ -1,0 +1,30 @@
+﻿h5, h6 {
+    color: black
+}
+
+.delete-session-button, .mark-as-done-button {
+    position: relative;
+    right: 12px;
+    font-size: 25px;
+    padding-top: 7px;
+    transition: 100ms all linear;
+}
+
+.mark-as-done-button {
+    color: #4287f5;
+}
+
+.delete-session-button {
+    color: #d20000;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.card:hover .delete-session-button {
+    visibility: visible;
+    opacity: 0.5;
+}
+
+    .card:hover .delete-session-button:hover {
+        opacity: 1;
+    }

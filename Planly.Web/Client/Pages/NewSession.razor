@@ -1,0 +1,24 @@
+﻿@page "/new-session"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h1>New Session</h1>
+
+<SessionEditor Session="session" Callback="HandleValidSubmitAsync" />
+
+@code {
+    private SessionDto session = new();
+
+    public NewSession()
+    {
+        session.StartTime = DateTimeOffset.Now;
+        session.EndTime = session.StartTime.Value.AddMinutes(30);
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        var response = await HttpClient.PostAsJsonAsync("/api/sessions", session);
+        response.EnsureSuccessStatusCode();
+        NavigationManager.NavigateTo("my-schedule");
+    }
+}

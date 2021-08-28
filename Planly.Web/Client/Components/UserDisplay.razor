@@ -1,0 +1,84 @@
+﻿@inject HttpClient HttpClient
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-8">
+                <h5 class="card-title">@User.EmailAddress</h5>
+                <h6 class="card-subtitle">ID: @User.Id</h6>
+            </div>
+            <AuthorizeView>
+                <Authorized>
+                    @if (context.User.FindFirst("sub").Value != User.Id.ToString())
+                    {
+                        <div class="col-3">
+                            @if (!User.Admin)
+                            {
+                                <button class="btn btn-secondary" @onclick="MakeAdminAsync">Make Admin</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary" @onclick="DemoteAdminAsync">Demote</button>
+                            }
+                        </div>
+                        <div class="col-1">
+                            <div class="lock-button" @onclick="ToggleLockAsync">
+                                @if (User.LockedOut)
+                                {
+                                    <span class="oi oi-lock-locked"></span>
+                                }
+                                else
+                                {
+                                    <span class="oi oi-lock-unlocked"></span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public User User { get; set; }
+    private string LockUrl => $"api/users/{User.Id}/lock";
+    private const string AdminsResourceUrl = "/api/users/administrators";
+
+    public async Task ToggleLockAsync()
+    {
+        User.LockedOut = !User.LockedOut;
+        StateHasChanged();
+
+        HttpResponseMessage response;
+        if (User.LockedOut)
+            response = await HttpClient.PutAsync(LockUrl, content: null);
+        else
+            response = await HttpClient.DeleteAsync(LockUrl);
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task MakeAdminAsync()
+    {
+        User.Admin = true;
+        StateHasChanged();
+
+        var request = new
+        {
+            UserId = User.Id
+        };
+        var response = await HttpClient.PostAsJsonAsync(AdminsResourceUrl, request);
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task DemoteAdminAsync()
+    {
+        User.Admin = false;
+        StateHasChanged();
+
+        var response = await HttpClient.DeleteAsync($"{AdminsResourceUrl}/{User.Id}");
+
+        response.EnsureSuccessStatusCode();
+    }
+}

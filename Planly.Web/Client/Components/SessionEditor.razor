@@ -1,0 +1,63 @@
+﻿<EditForm Model="Session" OnValidSubmit="Callback">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText class="form-control" id="title" @bind-Value="Session.Title" placeholder="e.g. Meeting with Dan" style="max-width: 512px" />
+        <ValidationMessage For="(() => Session.Title)" />
+    </div>
+
+    <div class="form-group">
+        <label for="start-time">Start</label><br />
+        <RadzenDatePicker id="start-time" @bind-Value="StartTime" ShowTime="true" DateFormat="MM/dd/yyyy HH:mm" />
+        <ValidationMessage class="invalid-feedback" For="(() => Session.StartTime)" />
+    </div>
+    <div class="form-group">
+        <label for="end-time">End</label><br />
+        <RadzenDatePicker id="end-time" @bind-Value="EndTime" ShowTime="true" DateFormat="MM/dd/yyyy HH:mm" />
+        <ValidationMessage For="(() => Session.EndTime)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public SessionDto Session { get; set; }
+    [Parameter]
+    public Func<Task> Callback { get; set; }
+    private DateTime? StartTime
+    {
+        get
+        {
+            return Session.StartTime?.LocalDateTime;
+        }
+        set
+        {
+            if (value is null)
+                Session.StartTime = null;
+            else
+            {
+                Session.StartTime = new DateTimeOffset(value.Value);
+                if (EndTime <= value)
+                {
+                    EndTime = value.Value.AddMinutes(30);
+                }
+            }
+
+        }
+    }
+    private DateTime? EndTime
+    {
+        get
+        {
+            return Session.EndTime?.LocalDateTime;
+        }
+        set
+        {
+            if (value is null)
+                Session.EndTime = null;
+            else
+                Session.EndTime = new DateTimeOffset(value.Value);
+        }
+    }
+}

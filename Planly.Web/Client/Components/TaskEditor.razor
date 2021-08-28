@@ -1,0 +1,83 @@
+﻿<EditForm Model="Task" OnValidSubmit="Callback" style="max-width: 512px">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText class="form-control" id="title" @bind-Value="Task.Title" placeholder="e.g. Study for the Math exam" />
+        <ValidationMessage For="(() => Task.Title)" />
+    </div>
+
+    <div class="form-group">
+        <label for="deadline">Deadline</label><br />
+        <RadzenDatePicker @bind-Value="Deadline" id="deadline" ShowTime="true" ShowSeconds="false" DateFormat="MM/dd/yyyy HH:mm" />
+        <ValidationMessage class="invalid-feedback" For="(() => Task.Deadline)" />
+    </div>
+
+    <div class="form-group">
+        <label for="ideal-session-duration">Ideal Session Duration</label><br />
+        <InputNumber class="form-control" id="ideal-session-duration" @bind-Value="IdealSessionDuration" min="0" style="width: 128px;display: inline-block;" /> Hours
+        <ValidationMessage class="invalid-feedback" For="(() => Task.IdealSessionDuration)" />
+    </div>
+
+    <div class="form-group">
+        <label for="total-time-required">Total Time Required</label><br />
+        <InputNumber class="form-control" id="total-time-required" @bind-Value="TotalTimeRequired" min="0" style="width: 128px;display:inline-block;" /> Hours
+        <ValidationMessage class="invalid-feedback" For="(() => Task.TotalTimeRequired)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+@code {
+    [Parameter]
+    public TaskDto Task { get; set; }
+    [Parameter]
+    public Func<Task> Callback { get; set; }
+
+    private DateTime? Deadline
+    {
+        get
+        {
+            return Task.Deadline?.ToLocalTime().DateTime;
+        }
+
+        set
+        {
+            if (value is null)
+                Task.Deadline = null;
+            else
+                Task.Deadline = new DateTimeOffset(value.Value);
+        }
+    }
+
+    private double? IdealSessionDuration
+    {
+        get
+        {
+            if (Task.IdealSessionDuration is null)
+                return null;
+            return Task.IdealSessionDuration.Value.TotalHours;
+        }
+        set
+        {
+            if (value is null)
+                Task.IdealSessionDuration = null;
+            else
+                Task.IdealSessionDuration = TimeSpan.FromHours(value.Value);
+        }
+    }
+    private double? TotalTimeRequired
+    {
+        get
+        {
+            if (Task.TotalTimeRequired is null)
+                return null;
+            return Task.TotalTimeRequired.Value.TotalHours;
+        }
+        set
+        {
+            if (value is null)
+                Task.TotalTimeRequired = null;
+            else
+                Task.TotalTimeRequired = TimeSpan.FromHours(value.Value);
+        }
+    }
+}

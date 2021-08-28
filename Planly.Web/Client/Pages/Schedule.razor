@@ -1,0 +1,86 @@
+﻿@page "/my-schedule"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient HttpClient
+
+<h1>Schedule</h1>
+
+<ActiveHoursEditor />
+<hr />
+@if (sessions.Any())
+{
+    <ul>
+        @foreach (var day in Days)
+        {
+            <li>
+                @if (day.Key == DateTime.Today)
+                {
+                    <h3>Today</h3>
+                }
+                else if (day.Key == DateTime.Today.AddDays(1))
+                {
+                    <h3>Tomorrow</h3>
+                }
+                else
+                {
+                    <h3>@day.Key.DayOfWeek.ToString(), @day.Key.ToString("d")</h3>
+                }
+
+                <ul>
+                    @foreach (var session in day)
+                    {
+                        <li>
+                            <SessionDisplay Session="@session" OnDelete="() => RemoveSession(session)" />
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}
+else if (!moreSessionsAvailable)
+{
+    <p>Your schedule is empty:)</p>
+}
+
+@if (moreSessionsAvailable)
+{
+    <button class="btn btn-primary" @onclick="LoadMoreAsync">Load more</button>
+}
+
+@code {
+    private const int LoadingLimit = 20;
+    private readonly List<SessionDto> sessions = new List<SessionDto>();
+    private bool moreSessionsAvailable;
+    private IEnumerable<IGrouping<DateTime, SessionDto>> Days
+    {
+        get
+        {
+            return from session in sessions
+                   group session by session.StartTime.Value.Date into day
+                   orderby day.Key
+                   select day;
+        }
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return LoadMoreAsync();
+    }
+
+    private async Task LoadMoreAsync()
+    {
+        var today = DateTime.Today.ToString("s");
+        var url = $"/api/sessions?offset={sessions.Count}&limit={LoadingLimit}&firstDate={today}";
+        var newSessions = await HttpClient.GetFromJsonAsync<List<SessionDto>>(url);
+        moreSessionsAvailable = newSessions.Count == LoadingLimit;
+        sessions.AddRange(newSessions);
+        StateHasChanged();
+    }
+
+    private void RemoveSession(SessionDto session)
+    {
+        sessions.Remove(session);
+        StateHasChanged();
+    }
+}

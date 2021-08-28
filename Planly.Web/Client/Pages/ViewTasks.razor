@@ -1,0 +1,72 @@
+﻿@page "/my-tasks"
+@using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
+@using Planly.Web.Client.JsonConverters
+@attribute [Authorize]
+@inject HttpClient HttpClient
+
+<h1>Tasks</h1>
+@if (tasks.Any())
+{
+<ul>
+    @foreach (var month in Months)
+    {
+<li>
+    <h3>@month.Key</h3>
+
+    <ul>
+        @foreach (var task in month)
+        {
+<li>
+    <TaskDisplay Task="task" OnDelete="() => RemoveTask(task)" />
+</li>                    }
+    </ul>
+</li>}
+</ul> }
+            else if (!moreTasksAvailable)
+            {
+<p>You don't have any tasks yet.</p>
+                <NavLink href="new-task"><button class="btn btn-primary">Create a task</button></NavLink>}
+
+@if (moreTasksAvailable)
+{
+<button class="btn btn-primary" @onclick="LoadMoreAsync">Load more</button>}
+
+@code { private static readonly JsonSerializerOptions JsonOptions = new()
+            {
+                Converters = { new TimeSpanConverter() },
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            private const int LoadingLimit = 20;
+            private List<TaskDto> tasks = new List<TaskDto>();
+            private bool moreTasksAvailable;
+            private IEnumerable<IGrouping<string, TaskDto>> Months
+            {
+                get
+                {
+                    return from task in tasks
+                           group task by task.Deadline.Value.ToString("MMMM yyyy") into month
+                           select month;
+                }
+            }
+
+            protected override Task OnInitializedAsync()
+            {
+                return LoadMoreAsync();
+            }
+
+            private async Task LoadMoreAsync()
+            {
+                var today = DateTime.Today.ToString("s");
+                var url = $"/api/tasks?offset={tasks.Count}&limit={LoadingLimit}";
+                var newTasks = await HttpClient.GetFromJsonAsync<List<TaskDto>>(url, JsonOptions);
+                moreTasksAvailable = newTasks.Count == LoadingLimit;
+                tasks.AddRange(newTasks);
+                StateHasChanged();
+            }
+
+            private void RemoveTask(TaskDto task)
+            {
+                tasks.Remove(task);
+                StateHasChanged();
+            } }

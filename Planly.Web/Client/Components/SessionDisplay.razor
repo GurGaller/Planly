@@ -1,0 +1,69 @@
+﻿@inject HttpClient HttpClient
+
+<div class="card">
+    <a @onclick="ToggleEditor" style="cursor: pointer">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-10">
+                    <h5 class="card-title">@Session.Title</h5>
+                    <h6 class="card-subtitle">@StartTime - @EndTime</h6>
+                </div>
+                <div class="col-1">
+                    <div class="delete-session-button" @onclick="DeleteSessionAsync">
+                        <span class="oi oi-trash"></span>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div class="mark-as-done-button" @onclick="MarkAsDoneAsync">
+                        <span class="oi oi-check"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    @if (displayEditor)
+    {
+        <div class="card-body">
+            <SessionEditor Session="Session" Callback="UpdateSessionAsync" />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public SessionDto Session { get; set; }
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+    private string SessionUrl => $"/api/sessions/{Session.Id}";
+    private string StartTime => Session.StartTime.Value.ToLocalTime().ToString("H:mm");
+    private string EndTime => Session.EndTime.Value.ToLocalTime().ToString("H:mm");
+    private bool displayEditor;
+
+    private void ToggleEditor()
+    {
+        displayEditor = !displayEditor;
+        StateHasChanged();
+    }
+
+    private async Task UpdateSessionAsync()
+    {
+        var response = await HttpClient.PutAsJsonAsync(SessionUrl, Session);
+        response.EnsureSuccessStatusCode();
+    }
+
+    private async Task DeleteSessionAsync()
+    {
+        var response = await HttpClient.DeleteAsync(SessionUrl);
+        response.EnsureSuccessStatusCode();
+        displayEditor = false;
+        await OnDelete.InvokeAsync();
+    }
+
+    private async Task MarkAsDoneAsync()
+    {
+        var response = await HttpClient.PutAsync($"{SessionUrl}/completeness", content: null);
+        response.EnsureSuccessStatusCode();
+        displayEditor = false;
+        await OnDelete.InvokeAsync();
+    }
+}

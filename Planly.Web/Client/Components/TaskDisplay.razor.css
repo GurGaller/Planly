@@ -1,0 +1,27 @@
+﻿h5, h6 {
+    color: black
+}
+
+.delete-task-button {
+    position: relative;
+    right: 12px;
+    font-size: 25px;
+    padding-top: 7px;
+    color: #d20000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 100ms all linear;
+}
+
+.card:hover .delete-task-button {
+    visibility: visible;
+    opacity: 0.5;
+}
+
+    .card:hover .delete-task-button:hover {
+        opacity: 1;
+    }
+
+.done {
+    opacity: 0.5;
+}

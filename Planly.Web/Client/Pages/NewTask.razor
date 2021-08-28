@@ -1,0 +1,28 @@
+﻿@page "/new-task"
+@using Microsoft.AspNetCore.Authorization;
+@using System.Text.Json
+@using Planly.Web.Client.JsonConverters
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<h1>New Task</h1>
+
+<TaskEditor Task="task" Callback="CreateAsync" />
+
+@code { private TaskDto task = new TaskDto
+            {
+                Deadline = DateTimeOffset.Now.AddDays(7)
+            };
+            private static readonly JsonSerializerOptions JsonOptions = new()
+            {
+                Converters = { new TimeSpanConverter() }
+            };
+
+            private async Task CreateAsync()
+            {
+                var response = await HttpClient.PostAsJsonAsync("/api/tasks", task, JsonOptions);
+                response.EnsureSuccessStatusCode();
+
+                NavigationManager.NavigateTo("/my-tasks");
+            } }
